@@ -1,0 +1,5 @@
+# Facebook Replication Application
+
+## Long Exam 1 – Facebook Replication Application with DummyJSON API Integration
+
+For this exam, I added and tested different features in my facebook replication project to make it work better and feel more complete. the login feature is connected to the dummyjson api, and the user's account information is saved on the device using SharedPreferences. when the app starts, the SplashScreen checks the saved login details and opens the proper screen. I also updated the profile section so it can show posts based on the current user's id instead of displaying the same posts for every user. the settings screen was also improved by adding a logout option that clears the saved account information. I also worked on the interaction between the user and the posts. when a post is opened, the DetailScreen uses the CommentService to get and display its comments. the like button can now be pressed and users can also add their own comments. through these changes, i was able to practice using api requests, saving data locally, getting information using user ids, and connecting different screens and services together in the app.

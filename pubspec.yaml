@@ -1,0 +1,71 @@
+name: puducay_mobprog
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  cached_network_image: ^3.4.1
+  carousel_slider: ^5.1.1
+  flutter:
+    sdk: flutter
+  flutter_screenutil: ^5.9.3
+  provider: ^6.1.5+1
+  shared_preferences: ^2.5.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/owl.jpg
+    - assets/images/rose.jpg
+    - assets/images/jessica.jpeg
+    - assets/images/images.jpeg
+    - assets/images/ryzamae.jpg
+    - assets/images/sunset.jpeg
+    - assets/images/coding.jpg
+    - assets/images/coffee rain.jpeg
+    - assets/images/throwback.jpg
+    - assets/images/boi.jpeg
+    - assets/images/afam.jpeg
+    - assets/images/girl.jpg
+    - assets/images/girl 1.jpeg
+    - assets/images/girl 2.jpeg
+    - assets/images/girl 3.jpeg
+    - assets/images/girl 4.jpeg
+    - assets/images/girl 5.jpeg
+    - assets/images/boy 1.jpeg
+    - assets/images/boy 2.jpeg
+    - assets/images/boy 3.jpeg
+    - assets/images/boy 4.jpeg
+    - assets/images/boy 5.jpeg
+    - assets/images/janella.jpg
+    - assets/images/eloisa.jpg
+    - assets/images/janella 1.jpg
+    - assets/images/janella 2.jpg
+    - assets/images/janella 3.jpg
+    - assets/images/janella 4.jpg
+    - assets/images/janella 5.jpg
+    - assets/images/janella 6.jpg
+    - assets/images/NUCCITLogo_Black.png
+    - assets/images/SocialHub_logo.png
+    - assets/images/healthqueue_logo.png
+
+
+  fonts:
+    - family: Frutiger
+      fonts:
+        - asset: assets/fonts/FrutigerLTStd-Roman.otf
+
+    - family: Klavika
+      fonts:
+        - asset: assets/fonts/KlavikaBoldBold.otf
+
+
