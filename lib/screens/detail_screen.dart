@@ -12,7 +12,7 @@ class DetailScreen extends StatefulWidget {
   final String imageUrl;
   final String profileImageUrl;
   int numOfLikes;
-  // added so this post's real comments can be loaded/posted through dummyjson for enhancement 3
+  // added so this post's real comments can be loaded/posted through dummyjson
   final int? postId;
   final User? currentUser;
 
@@ -35,7 +35,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late int likes;
 
-  // added for enhancement 3: comment loading/posting state
+  // comment loading/posting state
   final CommentService _commentService = CommentService();
   final TextEditingController _commentController = TextEditingController();
   List<Comment> _comments = [];
@@ -47,7 +47,7 @@ class _DetailScreenState extends State<DetailScreen> {
   void initState() {
     super.initState();
     likes = widget.numOfLikes;
-    // only posts that came from the api (i.e. have a real postId) have comments to fetch, for enhancement 3
+    // only posts that came from the api (i.e. have a real postId) have comments to fetch
     if (widget.postId != null) {
       _loadComments();
     }
@@ -59,7 +59,7 @@ class _DetailScreenState extends State<DetailScreen> {
     super.dispose();
   }
 
-  // added to fetch every comment tied to this post from dummyjson for enhancement 3
+  // added to fetch every comment tied to this post from dummyjson
   Future<void> _loadComments() async {
     setState(() {
       _isLoadingComments = true;
@@ -74,13 +74,15 @@ class _DetailScreenState extends State<DetailScreen> {
       setState(() => _comments = comments);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _commentsError = 'Could not load comments. Pull to retry.');
+      setState(
+        () => _commentsError = 'Could not load comments. Pull to retry.',
+      );
     } finally {
       if (mounted) setState(() => _isLoadingComments = false);
     }
   }
 
-  // added to make each comment's like button interactive and sync the new count to the api for enhancement 3
+  // added to make each comment's like button interactive and sync the new count to the api
   Future<void> _toggleCommentLike(int index) async {
     final comment = _comments[index];
     final newLikes = comment.likes + 1;
@@ -98,7 +100,7 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }
 
-  // added to let the user post a new comment on this post for enhancement 3
+  // added to let the user post a new comment on this post
   Future<void> _submitComment() async {
     final text = _commentController.text.trim();
     if (text.isEmpty) return;
@@ -137,7 +139,9 @@ class _DetailScreenState extends State<DetailScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not post comment. Please try again.')),
+        const SnackBar(
+          content: Text('Could not post comment. Please try again.'),
+        ),
       );
     } finally {
       if (mounted) setState(() => _isPostingComment = false);
@@ -179,11 +183,17 @@ class _DetailScreenState extends State<DetailScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(radius: 14.sp, child: const Icon(Icons.person, size: 16)),
+              CircleAvatar(
+                radius: 14.sp,
+                child: const Icon(Icons.person, size: 16),
+              ),
               SizedBox(width: 8.w),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 8.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(12),
@@ -191,7 +201,10 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(comment.userName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        comment.userName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 2.h),
                       Text(comment.body),
                     ],
@@ -199,14 +212,21 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ),
               SizedBox(width: 6.w),
-              // added the interactive comment-like button for enhancement 3
+              // added the interactive comment-like button
               Column(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.thumb_up_outlined, size: 18.sp, color: Colors.teal),
+                    icon: Icon(
+                      Icons.thumb_up_outlined,
+                      size: 18.sp,
+                      color: Colors.teal,
+                    ),
                     onPressed: () => _toggleCommentLike(index),
                   ),
-                  Text(comment.likes.toString(), style: TextStyle(fontSize: 11.sp)),
+                  Text(
+                    comment.likes.toString(),
+                    style: TextStyle(fontSize: 11.sp),
+                  ),
                 ],
               ),
             ],
@@ -281,9 +301,12 @@ class _DetailScreenState extends State<DetailScreen> {
                 ],
               ),
               const Divider(height: 24),
-              Text('Comments', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+              Text(
+                'Comments',
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+              ),
               SizedBox(height: 8.h),
-              // added the add-a-comment input + comments list for enhancement 3
+              // added the add-a-comment input + comments list
               Row(
                 children: [
                   Expanded(
@@ -301,7 +324,9 @@ class _DetailScreenState extends State<DetailScreen> {
                       ? SizedBox(
                           width: 20.sp,
                           height: 20.sp,
-                          child: const CircularProgressIndicator(strokeWidth: 2),
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
                         )
                       : IconButton(
                           icon: const Icon(Icons.send, color: Colors.teal),

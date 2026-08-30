@@ -1,5 +1,5 @@
 // added this controller so the whole app can flip between light/dark without pulling in a
-// state-management package, for the dark mode enhancement
+// (Enhancement 2 - Dark Mode Preference): state-management package
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

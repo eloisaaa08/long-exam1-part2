@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _pulse;
 
   final List<_Particle> _particles = [];
-  // added so splash can decide between /home and /login for enhancement 1
+  // added so splash can decide between /home and /login
   final UserService _authService = UserService();
 
   @override
@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
     getIsLogin();
   }
 
-  // changed to check UserService for a saved session instead of always going to /login, for enhancement 1
+  // changed to check UserService for a saved session instead of always going to /login
   void getIsLogin() {
     Timer(const Duration(seconds: 4), () async {
       final bool loggedIn = await _authService.isLoggedIn();

@@ -1,12 +1,11 @@
 import 'package:puducay_mobprog/screens/login_screen.dart';
-import 'package:puducay_mobprog/screens/newsfeed_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:puducay_mobprog/screens/register_screen.dart';
 import 'package:puducay_mobprog/screens/splash_screen.dart';
 import 'package:puducay_mobprog/providers/theme_provider.dart';
 
-// changed to async so the saved dark/light preference is loaded before the first frame is drawn, for the dark mode enhancement
+// changed to async so the saved dark/light preference is loaded before the first frame is drawn
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeProvider.loadSavedTheme();
@@ -22,7 +21,7 @@ class PuducayFacebook extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        // added: rebuilds MaterialApp whenever ThemeProvider's mode changes, for the dark mode enhancement
+        // added: rebuilds MaterialApp whenever ThemeProvider's mode changes
         return ValueListenableBuilder<ThemeMode>(
           valueListenable: ThemeProvider.themeMode,
           builder: (context, mode, __) {
@@ -34,7 +33,10 @@ class PuducayFacebook extends StatelessWidget {
               darkTheme: ThemeProvider.darkTheme,
               initialRoute: '/splash',
               routes: {
-                '/newsfeed': (context) => const NewsFeedScreen(),
+                // removed the '/newsfeed' named route — it was dead
+                // code (nothing called Navigator.pushNamed(context, '/newsfeed')) and NewsFeedScreen
+                // now requires a currentUser, which a route table has no way to supply. The real
+                // flow is splash -> login -> HomeScreen, which builds NewsFeedScreen itself.
                 '/login': (context) => const LoginScreen(),
                 '/register': (context) => const RegisterScreen(),
                 '/splash': (context) => const SplashScreen(),

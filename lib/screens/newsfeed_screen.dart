@@ -1,92 +1,156 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// rewritten so the newsfeed renders real dummyjson posts
+// (with each poster's real name/avatar) instead of the old hardcoded PostCard list
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../models/post.dart';
+import '../models/user.dart';
+import '../services/post_service.dart';
+import '../services/user_service.dart';
 import '../widgets/post_card.dart';
 
-class NewsFeedScreen extends StatelessWidget {
-  const NewsFeedScreen({super.key});
+class NewsFeedScreen extends StatefulWidget {
+  // (Newsfeed Update): the logged-in user is threaded through so posts opened from
+  // the newsfeed can load/add real comments on the detail screen, same as the profile screen
+  final User currentUser;
+
+  const NewsFeedScreen({super.key, required this.currentUser});
+
+  @override
+  State<NewsFeedScreen> createState() => _NewsFeedScreenState();
+}
+
+class _NewsFeedScreenState extends State<NewsFeedScreen> {
+  final PostService _postService = PostService();
+  final UserService _userService = UserService();
+
+  // loads dummyjson posts and every dummyjson user together so each
+  // post can be paired with its author's real name/avatar (instead of "User <id>") for display
+  late Future<_NewsFeedData> _feedFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _feedFuture = _loadFeed();
+  }
+
+  Future<_NewsFeedData> _loadFeed() async {
+    final results = await Future.wait([
+      _postService.getAllPosts(),
+      _userService.getAllUsers(),
+    ]);
+    return _NewsFeedData(
+      posts: results[0] as List<Post>,
+      usersById: results[1] as Map<int, User>,
+    );
+  }
+
+  void _retryLoadFeed() {
+    setState(() => _feedFuture = _loadFeed());
+  }
 
   @override
   Widget build(BuildContext context) {
-    // ---------------------------
-    // NewsFeed posts
-    // ---------------------------
-    final posts = <PostCard>[
-      PostCard(
-        userName: 'Eloisa Puducay',
-        postContent: 'Kamusta',
-        numOfLikes: 2000,
-        date: 'October 11',
-        imageUrl:
-            'https://www.petplace.com/article/breed/media_15ad72c2fdb39acf09aafa9934912c89bfa08665a.jpeg?width=1200&format=pjpg&optimize=medium',
-        profileImageUrl:
-            'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?q=80&w=736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      ),
-      PostCard(
-        userName: 'Janella Elyse',
-        postContent: 'Kicking off the holiday season with ICpEP-NCR!',
-        numOfLikes: 200,
-        date: 'December 2',
-        profileImageUrl:
-            'https://image.petmd.com/files/inline-images/shiba-inu-black-and-tan-colors.jpg?VersionId=pLq84BE0jdMjXeDCUJ3JLFPuIWsVMUU',
-      ),
-      PostCard(
-        userName: 'Cyrus Robles',
-        postContent: 'Hello CCIT!',
-        numOfLikes: 120,
-        date: 'January 3',
-        profileImageUrl:
-            'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=715&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      ),
-      PostCard(
-        userName: 'Alexia Kaye',
-        postContent: 'Study grind 💪',
-        numOfLikes: 89,
-        date: 'January 10',
-        profileImageUrl:
-            'https://image.petmd.com/files/inline-images/shiba-inu-black-and-tan-colors.jpg?VersionId=pLq84BE0jdMjXeDCUJ3JLFPuIWsVMUU',
-      ),
-    ];
+    return FutureBuilder<_NewsFeedData>(
+      future: _feedFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    // ---------------------------
-    // Advertisement posts
-    // ---------------------------
-    final adsItems = buildAdsItems(count: 7); // 5-7 items
-
-    // ---------------------------
-    // Build feed: alternate post -> ad (max 4)
-    // ---------------------------
-    final children = <Widget>[];
-    int adsInserted = 0;
-
-    for (int i = 0; i < posts.length; i++) {
-      children.add(posts[i]);
-      children.add(SizedBox(height: 12.h));
-
-      if (adsInserted < 4) {
-        // Advertisement section with title
-        children.add(
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
-            child: Text(
-              'Advertisement / Promotion',
-              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Could not load the newsfeed.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  TextButton(
+                    onPressed: _retryLoadFeed,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
             ),
+          );
+        }
+
+        final data = snapshot.data!;
+
+        // (Newsfeed Update): each PostCard now gets the real poster's name/avatar
+        // (falling back to "User <id>" only if dummyjson has no matching user record) instead
+        // of the previously hardcoded userName/profileImageUrl values
+        final posts = data.posts.map((post) {
+          final author = data.usersById[post.userId];
+          return PostCard(
+            userName: author?.fullName ?? 'User ${post.userId}',
+            postContent: post.body,
+            numOfLikes: post.likes,
+            date: 'Just now',
+            profileImageUrl: author?.image ?? '',
+            postId: post.id,
+            currentUser: widget.currentUser,
+          );
+        }).toList();
+
+        // ---------------------------
+        // Advertisement posts
+        // ---------------------------
+        final adsItems = buildAdsItems(count: 7); // 5-7 items
+
+        // ---------------------------
+        // Build feed: alternate post -> ad (max 4)
+        // ---------------------------
+        final children = <Widget>[];
+        int adsInserted = 0;
+
+        for (int i = 0; i < posts.length; i++) {
+          children.add(posts[i]);
+          children.add(SizedBox(height: 12.h));
+
+          if (adsInserted < 4) {
+            // Advertisement section with title
+            children.add(
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: Text(
+                  'Advertisement / Promotion',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+            children.add(SizedBox(height: 6.h));
+            children.add(_AdsCarousel(items: adsItems));
+            children.add(SizedBox(height: 20.h));
+            adsInserted++;
+          }
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async => _retryLoadFeed(),
+          child: ListView(
+            padding: EdgeInsets.only(bottom: 20.h),
+            children: children,
           ),
         );
-        children.add(SizedBox(height: 6.h));
-        children.add(_AdsCarousel(items: adsItems));
-        children.add(SizedBox(height: 20.h));
-        adsInserted++;
-      }
-    }
-
-    return ListView(
-      padding: EdgeInsets.only(bottom: 20.h),
-      children: children,
+      },
     );
   }
+}
+
+// (Newsfeed Update): small holder so posts + the users map load together via Future.wait
+class _NewsFeedData {
+  final List<Post> posts;
+  final Map<int, User> usersById;
+
+  _NewsFeedData({required this.posts, required this.usersById});
 }
 
 // ---------------------------

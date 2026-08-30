@@ -9,7 +9,7 @@ import '../screens/settings_screen.dart';
 import '../widgets/custom_font.dart';
 
 class HomeScreen extends StatefulWidget {
-  // changed from a plain username string to the full authenticated User for enhancement 1
+  // changed from a plain username string to the full authenticated User
   final User currentUser;
   final int initialIndex;
 
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController = PageController(initialPage: _selectedIndex);
   }
 
-  // changed to show the authenticated user's name instead of a passed-in string for enhancement 1
+  // changed to show the authenticated user's name instead of a passed-in string
   String get appBarTitle {
     if (_selectedIndex == 0) return "SocialHub";
     if (_selectedIndex == 1) return "Notifications";
@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: FB_PRIMARY,
         ),
         actions: [
-          // added a way into SettingsScreen (and its Sign Out action) for enhancement 2
+          // added a way into SettingsScreen (and its Sign Out action)
           IconButton(
             icon: Icon(Icons.settings, size: 24.sp, color: FB_PRIMARY),
             onPressed: () {
@@ -72,9 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _pageController,
         onPageChanged: (page) => setState(() => _selectedIndex = page),
         children: [
-          const NewsFeedScreen(),
+          // changed to pass the authenticated user so posts opened
+          // from the newsfeed can load/add real comments, same as posts opened from the profile
+          NewsFeedScreen(currentUser: widget.currentUser),
           const NotificationScreen(),
-          // changed to pass the authenticated user so posts can be fetched by userId for enhancement 2
+          // changed to pass the authenticated user so posts can be fetched by userId
           ProfileScreen(currentUser: widget.currentUser),
         ],
       ),

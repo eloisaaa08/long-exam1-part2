@@ -1,4 +1,4 @@
-// added auth service to authenticate against dummyjson's endpoints for enhancement 1
+// added auth service to authenticate against dummyjson's endpoints
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +10,7 @@ class UserService {
   static const String _kUserKey = 'auth_user';
   static const String _kIsLoggedInKey = 'auth_is_logged_in';
 
-  // added a feature where it calls POST /auth/login with the needed attributes to authenticate the user for enhancement 1
+  // added a feature where it calls POST /auth/login with the needed attributes to authenticate the user
   Future<User> login({
     required String username,
     required String password,
@@ -43,20 +43,37 @@ class UserService {
     throw Exception(message);
   }
 
-  // added a feature to save the logged-in user as json so the session survives an app restart for enhancement 1
+  // fetches every dummyjson user so the newsfeed can map each
+  // post's userId to a real name/avatar instead of showing a generic "User <id>" label
+  Future<Map<int, User>> getAllUsers() async {
+    final uri = Uri.parse('$_host/users?limit=0');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final List<dynamic> usersJson = data['users'] ?? [];
+      final users = usersJson
+          .map((e) => User.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return {for (final u in users) u.id: u};
+    }
+    throw Exception('Failed to load users (status ${response.statusCode})');
+  }
+
+  // added a feature to save the logged-in user as json so the session survives an app restart
   Future<void> _saveSession(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kUserKey, jsonEncode(user.toJson()));
     await prefs.setBool(_kIsLoggedInKey, true);
   }
 
-  // used by SplashScreen to decide whether to go straight to /home or /login for enhancement 1
+  // used by SplashScreen to decide whether to go straight to /home or /login
   Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_kIsLoggedInKey) ?? false;
   }
 
-  // reads the saved user back out of shared_preferences so screens don't need the user passed in manually for enhancement 1
+  // reads the saved user back out of shared_preferences so screens don't need the user passed in manually
   Future<User?> getSavedUser() async {
     final prefs = await SharedPreferences.getInstance();
     final String? raw = prefs.getString(_kUserKey);
@@ -69,7 +86,7 @@ class UserService {
     }
   }
 
-  // clears the saved session; wired to the Sign Out action on the settings screen for enhancement 2
+  // clears the saved session; wired to the Sign Out action on the settings screen
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kUserKey);

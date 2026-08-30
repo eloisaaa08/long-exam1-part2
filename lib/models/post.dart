@@ -1,4 +1,4 @@
-// added this model to represent a post returned by dummyjson's /posts endpoints for enhancement 2
+// added this model to represent a post returned by dummyjson's /posts endpoints
 class Post {
   final int id;
   final int userId;

@@ -1,4 +1,4 @@
-// added this model to represent a comment returned by dummyjson's /comments endpoints for enhancement 3
+// added this model to represent a comment returned by dummyjson's /comments endpoints
 class Comment {
   final int id;
   final int postId;

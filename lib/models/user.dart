@@ -1,4 +1,4 @@
-// added this model to represent the authenticated dummyjson user for enhancement 1
+// added this model to represent the authenticated dummyjson user
 class User {
   final int id;
   final String username;

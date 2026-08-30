@@ -1,4 +1,4 @@
-// added this service to load and post comments per post for enhancement 3
+// added this service to load and post comments per post
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -7,7 +7,7 @@ import '../models/comment.dart';
 class CommentService {
   static const String _host = 'https://dummyjson.com';
 
-  // calls GET /comments/post/{postId} to load every comment that belongs to a post for enhancement 3
+  // calls GET /comments/post/{postId} to load every comment that belongs to a post
   Future<List<Comment>> getCommentsByPostId(int postId) async {
     final uri = Uri.parse('$_host/comments/post/$postId');
     final response = await http.get(uri);
@@ -24,7 +24,7 @@ class CommentService {
     );
   }
 
-  // added a feature so users can add a comment to a post for enhancement 3
+  // added a feature so users can add a comment to a post
   Future<Comment> addComment({
     required int postId,
     required String body,
@@ -44,7 +44,7 @@ class CommentService {
     throw Exception('Failed to add comment (status ${response.statusCode})');
   }
 
-  // added a feature to make the comment like button interactive by pushing the new count to the api for enhancement 3
+  // added a feature to make the comment like button interactive by pushing the new count to the api
   Future<void> updateCommentLikes(int commentId, int newLikes) async {
     final uri = Uri.parse('$_host/comments/$commentId');
     final response = await http.put(

@@ -12,7 +12,7 @@ import '../widgets/post_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   // changed from a plain username string to the full authenticated User so posts can be
-  // fetched by userId and the About tab can show real contact info, for enhancement 2
+  // fetched by userId and the About tab can show real contact info
   final User currentUser;
 
   const ProfileScreen({super.key, required this.currentUser});
@@ -22,7 +22,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // added for enhancement 2: fetches this user's posts from dummyjson
+  // fetches this user's posts from dummyjson
   final PostService _postService = PostService();
   late Future<List<Post>> _postsFuture;
 
@@ -39,11 +39,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // added a feature so the profile screen fetches posts filtered to the authenticated user's id, for enhancement 2
+    // added a feature so the profile screen fetches posts filtered to the authenticated user's id
     _postsFuture = _postService.getPostsByUserId(widget.currentUser.id);
   }
 
-  // added to let the user pull-to-retry if the initial fetch fails, for enhancement 2
+  // added to let the user pull-to-retry if the initial fetch fails
   void _retryLoadPosts() {
     setState(() {
       _postsFuture = _postService.getPostsByUserId(widget.currentUser.id);
@@ -143,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // changed from a hardcoded list of InkWell+PostCard entries to a FutureBuilder that renders
-  // whatever dummyjson returns for this user's id, for enhancement 2
+  // whatever dummyjson returns for this user's id
   Widget _postsTab() {
     return FutureBuilder<List<Post>>(
       future: _postsFuture,
@@ -164,7 +164,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   'Could not load posts.',
                   style: TextStyle(color: Colors.grey),
                 ),
-                TextButton(onPressed: _retryLoadPosts, child: const Text('Retry')),
+                TextButton(
+                  onPressed: _retryLoadPosts,
+                  child: const Text('Retry'),
+                ),
               ],
             ),
           );
@@ -231,11 +234,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        // changed to show the authenticated user's own avatar from dummyjson for enhancement 2
+                        // changed to show the authenticated user's own avatar from dummyjson
                         CircleAvatar(
                           radius: 50,
                           backgroundImage: widget.currentUser.image.isNotEmpty
-                              ? CachedNetworkImageProvider(widget.currentUser.image)
+                              ? CachedNetworkImageProvider(
+                                  widget.currentUser.image,
+                                )
                               : const CachedNetworkImageProvider(
                                   'https://hips.hearstapps.com/hmg-prod/images/shibainu-dog-royalty-free-image-1752089989.pjpeg?crop=1xw:1xh;center,top',
                                 ),
@@ -480,7 +485,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: Colors.grey[700],
                               ),
                               SizedBox(width: 8.w),
-                              // changed to show the authenticated user's real email for enhancement 2
+                              // changed to show the authenticated user's real email
                               Text(
                                 widget.currentUser.email,
                                 style: TextStyle(
@@ -499,7 +504,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: Colors.grey[700],
                               ),
                               SizedBox(width: 8.w),
-                              // changed to show the authenticated user's dummyjson username for enhancement 2
+                              // changed to show the authenticated user's dummyjson username
                               Text(
                                 '@${widget.currentUser.username}',
                                 style: TextStyle(

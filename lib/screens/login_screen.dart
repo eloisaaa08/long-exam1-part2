@@ -18,11 +18,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  // added to authenticate against dummyjson instead of a hardcoded check for enhancement 1
+  // added to authenticate against dummyjson instead of a hardcoded check
   final UserService _authService = UserService();
   bool _isLoading = false;
 
-  // changed from a local username/password check to a real POST /auth/login call for enhancement 1
+  // changed from a local username/password check to a real POST /auth/login call
   Future<void> login() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontColor: FB_DARK_PRIMARY,
                       ),
                       SizedBox(height: ScreenUtil().setHeight(10)),
-                      // added so testers know which dummyjson account works out of the box for enhancement 1
+                      // added so testers know which dummyjson account works out of the box
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(

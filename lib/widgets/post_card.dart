@@ -58,7 +58,7 @@ class PostCard extends StatefulWidget {
   final String profileImageUrl;
   final bool isAds;
   final String adsMarket;
-  // added so posts backed by dummyjson can load/add real comments on the detail screen for enhancement 3
+  // EDIT FIX (Enhancement 3): added so posts backed by dummyjson can load/add real comments on the detail screen
   final int? postId;
   final User? currentUser;
 
